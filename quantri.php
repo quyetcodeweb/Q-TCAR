@@ -833,7 +833,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'xoaxe') {
         }
     </script>
     <?php
-    // Đóng kết nối
+    // Đóng kết 
     $conn->close();
     ?>
 </body>
