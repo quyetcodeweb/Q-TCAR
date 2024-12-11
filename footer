@@ -1,0 +1,23 @@
+<div class="footer-top">
+    <li><a href=""><img src="image/logocar.png" alt="" width="100%" height="100%"></a></li>
+    <li><a href="gioithieu.php">Giới thiệu</a></li>
+    <li><a href="huongdan.php">Hướng dẫn</a></li>
+    <li><a href="thongtin.php">Thông tin</a></li>
+    <li>
+        <a href="https://www.facebook.com/minh.quyet213/" class="fab fa-facebook-f"></a>
+        <a href="https://twitter.com/" class="fab fa-twitter"></a>
+        <a href="https://www.youtube.com/results?search_query=l%E1%BA%ADp+tr%C3%ACnh+/" class="fab fa-youtube"></a>
+    </li>
+</div>
+<div class="footer-center" id="footerr">
+    <p>
+        Trang web cho thuê xe máy, ô tô uy tín nhất! <br>
+        Địa chỉ: 123 Lê Hồng Phong, Quy Nhơn, Bình Định <br>
+        Tư vấn online: <b>123-456-789</b><br>
+        Email: <a href="mailto:support@qtcarrental.com">support@qtcarrental.com</a>
+    </p>
+</div>
+
+<div class="footer-bottom">
+    @Q&TCARchothuexe
+</div>
