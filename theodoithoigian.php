@@ -445,7 +445,7 @@
 					<h3 style="font-size: 25px; margin:10px; color:red; border-bottom: #bcb8b8;"></h3>
 					<h1 style="margin-top: 20px; margin-left: 10px;"></h1>
 				</div>
-				<a class="fa fa-shopping-bag doi-mau" id="shopping-icon" href="#"></a>
+				<a class="fa fa-heart doi-mau" id="shopping-icon" href="yeuthich.php"></a>
 			</li>
 		</ul>
 	</header>

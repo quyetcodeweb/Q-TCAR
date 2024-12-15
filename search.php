@@ -134,7 +134,7 @@
             }
             if (isset($_POST['btn'])) {
                 $noidung = $_POST['noidung'];
-                $stmt = $conn->prepare("SELECT * FROM xe WHERE TenXe LIKE ?");
+                $stmt = $conn->prepare("SELECT * FROM ttxe WHERE TenXe LIKE ?");
                 $searchTerm = "%$noidung%";
                 $stmt->bind_param("s", $searchTerm);
                 $stmt->execute();
@@ -143,10 +143,10 @@
                     while ($row = $result->fetch_assoc()) {
                         echo '<div class="cartegory-right-content-item">';
                         echo '<img src="' . $row["TenFile"] . '" alt="">';
-                        echo '<h1>' . $row["TenXe"] . '</h1>';
+                        echo '<h1>' . $row["Tenxe"] . '</h1>';
                         echo '<div class="item-footer">';
                         echo '<span>' . ($row["GiaThue"]) . '</span>';
-                        echo '<a href="thanhtoan.php?id=' . $row["STT"] . '&type=xe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
+                        echo '<a href="thanhtoan.php?id=' . $row["Maxe"] . '&type=ttxe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
                         echo '</div>';
                         echo '</div>';
                     }

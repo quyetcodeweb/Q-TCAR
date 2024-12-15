@@ -587,51 +587,294 @@ if (isset($_POST['action']) && $_POST['action'] == 'timkiemhoadon') {
                 <div class="form_textbox" style="margin-left:25%; font-size:20px; color:red">
                     <input type="radio" name="groupradio1" id="chonkieu1" style="transform: scale(1.5);">
                     <label for="chonkieu">Báo cáo theo ngày</label>
-                    <input type="radio" name="groupradio1" id="chonkieu2"
-                        style="margin-left: 50px; transform: scale(1.5);">
+                    <input type="radio" name="groupradio1" id="chonkieu2" style="margin-left: 50px; transform: scale(1.5);">
                     <label for="chonkieu">Báo cáo theo tháng</label>
                 </div>
-                <div style="margin-left:18%">
-                    <label for="date_start">Ngày bắt đầu: </label>
-                    <input type="date" class="textbox_quantri" name="date_start">
-                    <label for="date_end">Ngày kết thúc:</label>
-                    <input type="date" class="textbox_quantri" name="date_end">
+                <form method="POST" action="">
+                    <div style="margin-left:18%">
+                        <label for="date_start">Ngày bắt đầu: </label>
+                        <input type="date" class="textbox_quantri" name="date_start" required>
+                        <label for="date_end">Ngày kết thúc:</label>
+                        <input type="date" class="textbox_quantri" name="date_end" required>
+                    </div>
+
+                    <div class="form_btn" style="margin-left:60%">
+                        <input type="submit" class="btn_quantri" name="xem" value="Xem" id="xem_button">
+                        <input type="button" class="btn_quantri" name="xuathd" value="Xuất" onclick="thongBaoXuatDoanhThu()">
+                    </div>
+                </form>
+            </div>
+
+            <div class="content_quantri">
+                <h1 style="text-align: center;">Bảng Doanh Thu</h1>
+
+                <!-- BÁO CÁO THEO NGÀY -->
+                <div class="report_section" id="doanhthungay_section">
+                    <div class="total_section">
+                        <span>Tổng tiền:</span>
+                        <span id="tong_tien_ngay">
+                            <?php
+                            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xem'])) {
+                                $startDate = $_POST['date_start'];
+                                $endDate = $_POST['date_end'] . " 23:59:59";
+
+                                if (strtotime($startDate) <= strtotime($endDate)) {
+                                    $sql_total = "SELECT SUM(giathue) AS total_price 
+                                      FROM tthoadon 
+                                      WHERE starttime BETWEEN '$startDate' AND '$endDate'";
+                                    $result_total = $conn->query($sql_total);
+
+                                    if ($result_total && $row_total = $result_total->fetch_assoc()) {
+                                        echo number_format($row_total['total_price'], 2);
+                                    } else {
+                                        echo "0";
+                                    }
+                                } else {
+                                    echo "0";
+                                }
+                            }
+                            ?>
+                        </span>
+                    </div>
+
+                    <table class="table_dulieu_kh table_dulieu_dt" id="doanhthungay">
+                        <thead>
+                            <tr>
+                                <th>Ngày/Tháng/Năm</th>
+                                <th>Mã xe</th>
+                                <th>Giá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xem'])) {
+                                $startDate = $_POST['date_start'];
+                                $endDate = $_POST['date_end'] . " 23:59:59";
+
+                                if (strtotime($startDate) <= strtotime($endDate)) {
+                                    $sql = "SELECT starttime, maxe, giathue 
+                                FROM tthoadon 
+                                WHERE starttime BETWEEN '$startDate' AND '$endDate'";
+                                    $result = $conn->query($sql);
+
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<tr>";
+                                            echo "<td>" . date('d-m-Y', strtotime($row['starttime'])) . "</td>";
+                                            echo "<td>" . $row['maxe'] . "</td>";
+                                            echo "<td>" . number_format($row['giathue'], 2) . "</td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo '<tr><td colspan="3">Không có dữ liệu cho khoảng thời gian này</td></tr>';
+                                    }
+                                } else {
+                                    echo '<tr><td colspan="3">Khoảng thời gian không hợp lệ, vui lòng chọn lại.</td></tr>';
+                                }
+                            }
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="form_btn" style="margin-left:60%">
-                    <input type="button" class="btn_quantri" name="xuat" value="Xuất">
+
+                <!-- BÁO CÁO THEO THÁNG -->
+                <div class="report_section" id="doanhthuthang_section">
+
+
+                    <table class="table_dulieu_kh table_dulieu_dt" id="doanhthuthang">
+                        <thead>
+                            <tr>
+                                <th>Tháng/Năm</th>
+                                <th>Mã xe</th>
+                                <th>Giá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xem'])) {
+                                $startDate = $_POST['date_start'];
+                                $endDate = $_POST['date_end'] . " 23:59:59";
+
+                                if (strtotime($startDate) <= strtotime($endDate)) {
+                                    $sql_monthly = "SELECT EXTRACT(MONTH FROM starttime) AS month, 
+                                               EXTRACT(YEAR FROM starttime) AS year, 
+                                               maxe, 
+                                               SUM(giathue) AS total_price
+                                        FROM tthoadon
+                                        WHERE starttime BETWEEN '$startDate' AND '$endDate'
+                                        GROUP BY year, month, maxe
+                                        ORDER BY year, month";
+                                    $result_monthly = $conn->query($sql_monthly);
+
+                                    if ($result_monthly->num_rows > 0) {
+                                        while ($row = $result_monthly->fetch_assoc()) {
+                                            echo "<tr>";
+                                            echo "<td>" . $row['month'] . "/" . $row['year'] . "</td>";
+                                            echo "<td>" . $row['maxe'] . "</td>";
+                                            echo "<td>" . number_format($row['total_price'], 2) . "</td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='3'>Không có dữ liệu cho khoảng thời gian này</td></tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='3'>Khoảng thời gian không hợp lệ</td></tr>";
+                                }
+                            }
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="content_quantri">
-                <h1 style="align-self: center;">Bảng doanh thu</h1>
-                <div class="table_wrapper">
-                    <table class="table_dulieu_kh" id="doanhthungay">
-                        <thead>
-                            <tr>
-                                <th>Ngày/tháng/năm</th>
-                                <th>Tổng doanh thu ngày</th>
-                                <th>Đền bù</th>
-                                <th>Dư</th>
-                                <th>Nguồn tiền khác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+
+
+
+            <div id="trang_thai_thue_xe_on" class="content_section">
+                <div class="header_quantri">
+                    <div class="form_dangxuat">
+                        <i class="fa-solid fa-user-xmark" style="font-size: 30px; margin: 20px 0 0 75%"></i>
+                    </div>
+                    <div class="form_textbox">
+                        <input type="text" class="textbox_quantri" name="maxe" placeholder="Mã xe ..."
+                            style="width: 100px;">
+                        <input type="text" class="textbox_quantri" name="makh" placeholder="Mã khách hàng ..."
+                            style="width: 100px;">
+                        <input type="text" class="textbox_quantri" name="tenxe" placeholder="Tên xe ...">
+                        <input type="text" class="textbox_quantri" name="biensoxe" placeholder="Biển số xe ...">
+                        <input type="text" class="textbox_quantri" name="thoigiantraxe" placeholder="Thời gian trả xe ...">
+                    </div>
+                    <div class="form_btn" style="margin-left: 50%;">
+                        <input type="button" class="btn_quantri" name="capnhat" value="Cập nhật">
+                    </div>
                 </div>
-                <div class="table_wrapper">
-                    <table class="table_dulieu_kh" id="doanhthuthang">
-                        <thead>
-                            <tr>
-                                <th>Tháng/năm</th>
-                                <th>Tổng doanh thu ngày</th>
-                                <th>Đền bù</th>
-                                <th>Dư</th>
-                                <th>Nguồn tiền khác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                <div class="content_quantri">
+                    <h1 style="align-self: center;">Xe đang được thuê</h1>
+                    <div class="table_wrapper">
+                        <table class="table_dulieu_kh">
+                            <thead>
+                                <tr>
+                                    <th>Mã xe</th>
+                                    <th>Mã khách hàng</th>
+                                    <th>Tên xe</th>
+                                    <th>Biển số xe</th>
+                                    <th>Trả xe</th>
+                                    <th>Thời gian thuê</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if ($result_on->num_rows > 0) {
+                                    while ($row = $result_on->fetch_assoc()) { ?>
+                                        <tr>
+                                            <td><?php echo $row['Maxe']; ?></td>
+                                            <td><?php echo $row['MaKH']; ?></td>
+                                            <td><?php echo $row['Tenxe']; ?></td>
+                                            <td><?php echo $row['Bienso']; ?></td>
+                                            <td><?php echo $row['Endtime']; ?></td>
+                                            <td><?php echo $row['Starttime'] . " - " . $row['Endtime']; ?></td>
+                                        </tr>
+                                <?php }
+                                } else {
+                                    echo "<tr><td colspan='6'>Không có dữ liệu</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="trang_thai_thue_xe_off" class="content_section">
+                <div class="header_quantri">
+                    <div class="form_dangxuat">
+                        <i class="fa-solid fa-user-xmark" style="font-size: 30px; margin: 20px 0 0 75%"></i>
+                    </div>
+                    <div class="form_textbox">
+                        <input type="text" class="textbox_quantri" name="makh" placeholder="Mã xe ...">
+                        <input type="text" class="textbox_quantri" name="biensoxe" placeholder="Biển số xe ...">
+                        <input type="text" class="textbox_quantri" name="loaixe" placeholder="Loại xe ...">
+                        <input type="text" class="textbox_quantri" name="tenxe" placeholder="Tên xe ...">
+                    </div>
+                    <div class="form_btn" style="margin-left:50%;">
+                        <input type="button" class="btn_quantri" name="capnhat" value="Cập nhật">
+                    </div>
+                </div>
+                <div class="content_quantri">
+                    <h1 style="align-self: center;">Xe đang trong hàng chờ</h1>
+                    <div class="table_wrapper">
+                        <table class="table_dulieu_kh">
+                            <thead>
+                                <tr>
+                                    <th>Mã xe</th>
+                                    <th>Tên xe</th>
+                                    <th>Biển số xe</th>
+                                    <th>Loại xe</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if ($result_off->num_rows > 0) {
+                                    while ($row = $result_off->fetch_assoc()) { ?>
+                                        <tr>
+                                            <td><?php echo $row['Maxe']; ?></td>
+                                            <td><?php echo $row['Tenxe']; ?></td>
+                                            <td><?php echo $row['Bienso']; ?></td>
+                                            <td><?php echo $row['Loaixe']; ?></td>
+                                        </tr>
+                                <?php }
+                                } else {
+                                    echo "<tr><td colspan='4'>Không có dữ liệu</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="trang_thai_thue_xe_fix" class="content_section">
+                <div class="header_quantri">
+                    <div class="form_dangxuat">
+                        <i class="fa-solid fa-user-xmark" style="font-size: 30px; margin: 20px 0 0 75%"></i>
+                    </div>
+                    <div class="form_textbox">
+                        <input type="text" class="textbox_quantri" name="makh" placeholder="Mã xe ...">
+                        <input type="text" class="textbox_quantri" name="biensoxe" placeholder="Biển số xe ...">
+                        <input type="text" class="textbox_quantri" name="loaixe" placeholder="Loại xe ...">
+                        <input type="text" class="textbox_quantri" name="tenxe" placeholder="Tên xe ...">
+                    </div>
+                    <div class="form_btn" style="margin-left:50%;">
+                        <input type="button" class="btn_quantri" name="capnhat" value="Cập nhật">
+                    </div>
+                </div>
+                <div class="content_quantri">
+                    <h1 style="align-self: center;">Xe đang bảo trì</h1>
+                    <div class="table_wrapper">
+                        <table class="table_dulieu_kh">
+                            <thead>
+                                <tr>
+                                    <th>Mã xe</th>
+                                    <th>Tên xe</th>
+                                    <th>Biển số xe</th>
+                                    <th>Loại xe</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if ($result_fix->num_rows > 0) {
+                                    while ($row = $result_fix->fetch_assoc()) { ?>
+                                        <tr>
+                                            <td><?php echo $row['Maxe']; ?></td>
+                                            <td><?php echo $row['Tenxe']; ?></td>
+                                            <td><?php echo $row['Bienso']; ?></td>
+                                            <td><?php echo $row['Loaixe']; ?></td>
+                                        </tr>
+                                <?php }
+                                } else {
+                                    echo "<tr><td colspan='4'>Không có dữ liệu</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1173,6 +1416,20 @@ if (isset($_POST['action']) && $_POST['action'] == 'timkiemhoadon') {
         function thongBaoXuat() {
             // Lấy tất cả các dòng trong bảng (trừ dòng tiêu đề)
             var rows = document.querySelectorAll(".table_dulieu_hd tbody tr");
+
+            // Kiểm tra nếu không có dữ liệu trong bảng
+            if (rows.length === 0 || rows[0].querySelectorAll("td").length === 1) {
+                // Không có dữ liệu
+                alert("Không có dữ liệu để xuất.");
+            } else {
+                // Có dữ liệu
+                alert("Xuất thành công.");
+            }
+        }
+
+        function thongBaoXuatDoanhThu() {
+            // Lấy tất cả các dòng trong bảng (trừ dòng tiêu đề)
+            var rows = document.querySelectorAll(".table_dulieu_dt tbody tr");
 
             // Kiểm tra nếu không có dữ liệu trong bảng
             if (rows.length === 0 || rows[0].querySelectorAll("td").length === 1) {
