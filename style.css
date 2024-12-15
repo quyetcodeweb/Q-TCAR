@@ -1222,7 +1222,7 @@ a.doi-mau.user-icon:hover + .show-account,
     color: #221F20;
     text-transform: uppercase;
 }
-/* Update này 12/12 */
+/////////* Update *///////////
 .cartegory-right-content {
     margin-left: 15px;
     margin-right: 15px;
@@ -1263,7 +1263,7 @@ a.doi-mau.user-icon:hover + .show-account,
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		padding: px 5px; /* Tăng khoảng cách trong */
+		padding: 6px 5px; /* Tăng khoảng cách trong */
 	}	
     .cartegory-right-content-item span {
 		border: 1px solid #C0C0C0;
@@ -1308,7 +1308,8 @@ a.doi-mau.user-icon:hover + .show-account,
 .cartegory-right-content-item a[href="yeuthich.php"] span {
     font-size: 18px; /* Kích thước biểu tượng trái tim */
 }
-/* End update */
+
+////////////* End update */////////////
 .seperate-vehicle-sub {
 	display: flex;
 	justify-content: space-between;
