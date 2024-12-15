@@ -73,7 +73,43 @@
         <li><a class="doi-mau" href="thongtin.php">THÔNG TIN</a></li>
     </ul>
     <ul class="others">
-        <li><input placeholder="Tìm kiếm" type="text"> <i class="fas fa-search"></i></li>
+        <li>
+			<form method="post" action="search.php" class="search_row">
+				<input placeholder="Tìm kiếm" name="noidung" type= "text"> 
+				<button class="fas fa-search" type="submit" name="btn"></button>
+			</form>
+			<?php
+				$conn = new mysqli('localhost', 'root', '', 'tai_khoan');
+				if ($conn->connect_error) {
+					die("Kết nối thất bại: " . $conn->connect_error);
+				}
+				if(isset($_POST['btn'])) {
+					$noidung = $_POST['noidung'];
+					$stmt = $conn->prepare("SELECT * FROM xe WHERE TenXe LIKE ?");
+					$searchTerm = "%$noidung%";
+					$stmt->bind_param("s", $searchTerm);
+					$stmt->execute();
+					$result = $stmt->get_result();
+
+					if ($result->num_rows > 0) {
+						while($row = $result->fetch_assoc()) {
+							echo '<div class="cartegory-right-content-item">';
+							echo '<img src="' . $row["TenFile"] . '" alt="">';
+							echo '<h1>' . $row["TenXe"] . '</h1>';
+							echo '<div class="item-footer">';
+							echo '<span>' . ($row["GiaThue"]) . '</span>';
+							echo '<a href="thanhtoan.php?id=' . $row["STT"] . '&type=xe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
+							echo '</div>';
+							echo '</div>';
+						}
+					} else {
+						echo "Không có sản phẩm nào.";
+					}
+					$stmt->close();
+				}
+				$conn->close();
+			?>
+		</li>
 
         <?php if(isset($_SESSION['username'])) { 
             $username = $_SESSION['username'];
@@ -140,8 +176,9 @@
                 echo '<span>' . ($row["GiaThue"]) . '0.000</span>';
                 echo '<a href="thanhtoan.php?id=' . $row["Maxe"] . '&type=xe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
 				echo '<form action="" method="POST">';
-				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">';  // Truyền STT qua form
-				echo '<button type="submit" name="yeuthich" class="yeuthich-button"><span>&#9825;</span></button>';
+				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">'; // Truyền giá trị Maxe qua form
+				echo '<button type="submit" name="yeuthich" class="yeuthich-button">';
+				echo '<i class="fas fa-heart icon" data-state="unliked"></i></button>';
 				echo '</form>';
                 echo '</div>';
                 echo '</div>';
@@ -182,8 +219,9 @@
                 echo '<span>' . ($row["GiaThue"]) . '0.000</span>';
                 echo '<a href="thanhtoan.php?id=' . $row["Maxe"] . '&type=xe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
 				echo '<form action="" method="POST">';
-				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">';  // Truyền STT qua form
-				echo '<button type="submit" name="yeuthich" class="yeuthich-button"><span>&#9825;</span></button>';
+				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">'; // Truyền giá trị Maxe qua form
+				echo '<button type="submit" name="yeuthich" class="yeuthich-button">';
+				echo '<i class="fas fa-heart icon" data-state="unliked"></i></button>';
 				echo '</form>';
                 echo '</div>';
                 echo '</div>';
@@ -224,8 +262,9 @@
                 echo '<span>' . ($row["GiaThue"]) . '0.000</span>';
                 echo '<a href="thanhtoan.php?id=' . $row["Maxe"] . '&type=xe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
 				echo '<form action="" method="POST">';
-				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">';  // Truyền STT qua form
-				echo '<button type="submit" name="yeuthich" class="yeuthich-button"><span>&#9825;</span></button>';
+				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">'; // Truyền giá trị Maxe qua form
+				echo '<button type="submit" name="yeuthich" class="yeuthich-button">';
+				echo '<i class="fas fa-heart icon" data-state="unliked"></i></button>';
 				echo '</form>';
                 echo '</div>';
                 echo '</div>';
@@ -266,8 +305,9 @@
                 echo '<span>' . ($row["GiaThue"]) . '0.000</span>';
                 echo '<a href="thanhtoan.php?id=' . $row["Maxe"] . '&type=xe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
 				echo '<form action="" method="POST">';
-				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">';  // Truyền STT qua form
-				echo '<button type="submit" name="yeuthich" class="yeuthich-button"><span>&#9825;</span></button>';
+				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">'; // Truyền giá trị Maxe qua form
+				echo '<button type="submit" name="yeuthich" class="yeuthich-button">';
+				echo '<i class="fas fa-heart icon" data-state="unliked"></i></button>';
 				echo '</form>';
                 echo '</div>';
                 echo '</div>';
@@ -308,8 +348,9 @@
                 echo '<span>' . ($row["GiaThue"]) . '0.000</span>';
                 echo '<a href="thanhtoan.php?id=' . $row["Maxe"] . '&type=xe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
 				echo '<form action="" method="POST">';
-				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">';  // Truyền STT qua form
-				echo '<button type="submit" name="yeuthich" class="yeuthich-button"><span>&#9825;</span></button>';
+				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">'; // Truyền giá trị Maxe qua form
+				echo '<button type="submit" name="yeuthich" class="yeuthich-button">';
+				echo '<i class="fas fa-heart icon" data-state="unliked"></i></button>';
 				echo '</form>';
                 echo '</div>';
                 echo '</div>';
@@ -346,6 +387,30 @@
 
 	$conn->close();
 ?>
+<script>
+  // Lấy tất cả các nút có class .yeuthich-button
+  const toggleButtons = document.querySelectorAll('.yeuthich-button');
+
+  // Gắn sự kiện click cho từng nút
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Lấy icon bên trong nút hiện tại
+      const icon = button.querySelector('i');
+
+      // Kiểm tra và thay đổi trạng thái của icon
+      const currentState = icon.getAttribute('data-state'); // Lấy trạng thái hiện tại
+      if (currentState === 'liked') {
+        // Nếu đang ở trạng thái "liked", chuyển về trạng thái "unliked"
+        icon.setAttribute('data-state', 'unliked'); // Cập nhật trạng thái
+        icon.style.color = 'black'; 
+      } else {
+        // Nếu đang ở trạng thái "unliked", chuyển về trạng thái "liked"
+        icon.setAttribute('data-state', 'liked'); // Cập nhật trạng thái//
+		icon.style.color = 'red';    
+      }
+    });
+  });
+</script>
 <section class="seperate"><section>
 <section class="information">
 	<div class="infor">
