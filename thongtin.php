@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style11.css">
     <link rel="icon" type="image/png" href="image/logocar.png">
     <title>Thông tin | Q&TCAR</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Thêm SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
