@@ -136,6 +136,11 @@
                 echo '<div class="item-footer">';
                 echo '<span>' . ($row["GiaThue"]) . '0.000</span>';
                 echo '<a href="thanhtoan.php?id=' . $row["Maxe"] . '&type=xe &price=' . $row["GiaThue"] . '">Thuê ngay!</a>';
+				echo '<form action="" method="POST">';
+				echo '<input type="hidden" name="id" value="' . $row["Maxe"] . '">'; // Truyền giá trị Maxe qua form
+				echo '<button type="submit" name="yeuthich" class="yeuthich-button">';
+				echo '<i class="fas fa-heart icon" data-state="unliked"></i></button>';
+				echo '</form>';
                 echo '</div>';
                 echo '</div>';
             }
@@ -146,7 +151,80 @@
         ?>
     </div>
 </section>
+<?php
+	// Kết nối cơ sở dữ liệu
+	$conn = new mysqli('localhost', 'root', '', 'thong_tin');
 
+	// Kiểm tra kết nối
+	if ($conn->connect_error) {
+		die("Kết nối thất bại: " . $conn->connect_error);
+	}
+
+	// Kiểm tra nếu form đã được submit và có 'id' trong POST
+	if (isset($_POST['yeuthich']) && isset($_POST['id'])) {
+		// Lấy id xe từ POST
+		$id = $_POST['id']; // Mã xe (Maxe)
+
+		// Cập nhật cột 'yeuthich' của xe đó thành 1, thay thế STT bằng Maxe
+		$sql = "UPDATE ttxe SET yeuthich = 0 WHERE Maxe = '$id'"; // Chắc chắn rằng $id là một chuỗi hợp lệ
+
+		if ($conn->query($sql) === TRUE) {
+			// Cập nhật thành công
+			// Chuyển hướng về trang danh sách xe hoặc trang khác
+		}
+	} 
+
+	$conn->close();
+?>
+<script>
+  // Lấy tất cả các nút có class .yeuthich-button
+  const toggleButtons = document.querySelectorAll('.yeuthich-button');
+
+  // Gắn sự kiện click cho từng nút
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Lấy icon bên trong nút hiện tại
+      const icon = button.querySelector('i');
+
+      // Kiểm tra và thay đổi trạng thái của icon
+      const currentState = icon.getAttribute('data-state'); // Lấy trạng thái hiện tại
+      if (currentState === 'liked') {
+        // Nếu đang ở trạng thái "liked", chuyển về trạng thái "unliked"
+        icon.setAttribute('data-state', 'unliked'); // Cập nhật trạng thái
+        icon.style.color = 'black'; 
+      } else {
+        // Nếu đang ở trạng thái "unliked", chuyển về trạng thái "liked"
+        icon.setAttribute('data-state', 'liked'); // Cập nhật trạng thái//
+		icon.style.color = 'red';    
+      }
+    });
+  });
+</script>
+<?php
+	// Kết nối cơ sở dữ liệu
+	$conn = new mysqli('localhost', 'root', '', 'thong_tin');
+
+	// Kiểm tra kết nối
+	if ($conn->connect_error) {
+		die("Kết nối thất bại: " . $conn->connect_error);
+	}
+
+	// Kiểm tra nếu form đã được submit và có 'id' trong POST
+	if (isset($_POST['yeuthich']) && isset($_POST['id'])) {
+		// Lấy id xe từ POST
+		$id = $_POST['id']; // Mã xe (Maxe)
+
+		// Cập nhật cột 'yeuthich' của xe đó thành 1, thay thế STT bằng Maxe
+		$sql = "UPDATE ttxe SET yeuthich = 0 WHERE Maxe = '$id'"; // Chắc chắn rằng $id là một chuỗi hợp lệ
+
+		if ($conn->query($sql) === TRUE) {
+			// Cập nhật thành công
+			// Chuyển hướng về trang danh sách xe hoặc trang khác
+		}
+	} 
+
+	$conn->close();
+?>
 <section class="seperate"><section>
 <section class="information">
 	<div class="infor">
