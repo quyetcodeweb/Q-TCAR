@@ -387,7 +387,7 @@
 					<button class="fas fa-search" type="submit" name="btn"></button>
 				</form>
 				<?php
-				$conn = new mysqli('localhost', 'root', '', 'tai_khoan');
+				$conn = new mysqli('localhost', 'root', '', 'thong_tin');
 				if ($conn->connect_error) {
 					die("Kết nối thất bại: " . $conn->connect_error);
 				}
